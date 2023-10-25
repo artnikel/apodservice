@@ -1,7 +1,9 @@
+// Package model contains models which represents data of some object
 package model
 
 import "time"
 
+// APOD is a struct of metadata NASA APOD
 type APOD struct {
 	ID             int       `json:"id"`
 	Copyright      string    `json:"copyright"`

@@ -9,8 +9,8 @@ import (
 type Config struct {
 	ConnectionString string `env:"APOD_CONNECTION_STRING"`
 	Port             int    `env:"APOD_PORT"`
-	NasaApiKey       string `env:"NASA_API_KEY"`
-	NasaApiUrl       string `env:"NASA_API_URL"`
+	NasaAPIKey       string `env:"NASA_API_KEY"`
+	NasaAPIURL       string `env:"NASA_API_URL"`
 }
 
 // New returns parsed object of config
