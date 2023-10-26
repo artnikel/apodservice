@@ -41,6 +41,7 @@ func (h *ApodHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	apodsJSON, err := json.Marshal(apods)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

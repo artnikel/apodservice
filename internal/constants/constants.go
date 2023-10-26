@@ -12,6 +12,6 @@ const (
 	WorkFrequency = 24 * time.Hour
 	// MethodGet - http method GET of request
 	MethodGet = "GET"
-	// RWTimeout is timeout of server config
+	// RWTimeout is read and write timeout of server config
 	RWTimeout = 10 * time.Second
 )

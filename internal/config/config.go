@@ -8,9 +8,13 @@ import (
 // Config is a struct with environment variables
 type Config struct {
 	ConnectionString string `env:"APOD_CONNECTION_STRING"`
-	Port             int    `env:"APOD_PORT"`
+	Port             string `env:"APOD_PORT"`
 	NasaAPIKey       string `env:"NASA_API_KEY"`
 	NasaAPIURL       string `env:"NASA_API_URL"`
+	ApodDB           string `env:"APOD_DB"`
+	ApodUser         string `env:"APOD_USER"`
+	ApodPassword     string `env:"APOD_PASSWORD"`
+	ApodDBPort       string `env:"APOD_DB_PORT"`
 }
 
 // New returns parsed object of config

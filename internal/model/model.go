@@ -5,7 +5,7 @@ import "time"
 
 // APOD is a struct of metadata NASA APOD
 type APOD struct {
-	ID             int       `json:"id"`
+	ID             int       `json:"-"`
 	Copyright      string    `json:"copyright"`
 	Date           string    `json:"date"`
 	ParsedDate     time.Time `json:"-"`

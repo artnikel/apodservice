@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/artnikel/apodservice/internal/config"
@@ -63,12 +62,18 @@ func main() {
 	}()
 	apodSvc := service.NewApodService(pgclient)
 	apodHndl := handler.NewApodHandler(apodSvc)
-	http.HandleFunc("/list", apodHndl.GetAll)
-	http.HandleFunc("/today", apodHndl.GetToday)
-	http.HandleFunc("/bydate", apodHndl.GetByDate)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/list", apodHndl.GetAll)
+	mux.HandleFunc("/today", apodHndl.GetToday)
+	mux.HandleFunc("/bydate", apodHndl.GetByDate)
+
+	fs := http.FileServer(http.Dir("./storage"))
+	mux.Handle("/storage/", http.StripPrefix("/storage/", fs))
+
 	server := &http.Server{
-		Addr:         ":" + strconv.Itoa(cfg.Port),
-		Handler:      nil,
+		Addr:         ":" + cfg.Port,
+		Handler:      mux,
 		ReadTimeout:  constants.RWTimeout,
 		WriteTimeout: constants.RWTimeout,
 	}

@@ -1,6 +1,6 @@
 CREATE TABLE apod (
     id              SERIAL PRIMARY KEY,
-    copyright       VARCHAR(200) NOT NULL,
+    copyright       VARCHAR(200),
     date            DATE NOT NULL,
     explanation     VARCHAR(2000) NOT NULL,
     media_type      VARCHAR(20) NOT NULL,

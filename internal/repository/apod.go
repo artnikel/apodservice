@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/artnikel/apodservice/internal/constants"
 	"github.com/artnikel/apodservice/internal/model"
 )
 
@@ -16,12 +17,12 @@ func (r *PgClient) ApodCreate(ctx context.Context, apod *model.APOD) error {
 		return fmt.Errorf("querryRow %w", err)
 	}
 	if count != 0 {
-		return fmt.Errorf("the product name is already exist")
+		return fmt.Errorf("apod is already exist")
 	}
 	_, err = r.pool.Exec(ctx, `INSERT INTO apod 
-	(id, copyright, date, explanation, media_type, service_version, title, url) 
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-		apod.ID, apod.Copyright, apod.ParsedDate, apod.Explanation,
+	(copyright, date, explanation, media_type, service_version, title, url) 
+	VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+		apod.Copyright, apod.ParsedDate, apod.Explanation,
 		apod.MediaType, apod.ServiceVersion, apod.Title, apod.URL)
 	if err != nil {
 		return fmt.Errorf("exec %w", err)
@@ -45,6 +46,7 @@ func (r *PgClient) ApodGetAll(ctx context.Context) ([]*model.APOD, error) {
 		if err != nil {
 			return nil, fmt.Errorf("scan %w", err)
 		}
+		apod.Date = apod.ParsedDate.Format(constants.DateLayout)
 		apods = append(apods, apod)
 	}
 	return apods, nil
