@@ -32,7 +32,7 @@ func NewApodHandler(apodSvc ApodService) *ApodHandler {
 func (h *ApodHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != constants.MethodGet {
-		http.Error(w, "Invalid HTTP method", http.StatusMethodNotAllowed)
+		http.Error(w, constants.InvalidMethod, http.StatusMethodNotAllowed)
 		return
 	}
 	apods, err := h.apodSvc.GetAll(r.Context())
@@ -41,7 +41,6 @@ func (h *ApodHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	apodsJSON, err := json.Marshal(apods)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -59,7 +58,7 @@ func (h *ApodHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 func (h *ApodHandler) GetByDate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodGet {
-		http.Error(w, "Invalid HTTP method", http.StatusMethodNotAllowed)
+		http.Error(w, constants.InvalidMethod, http.StatusMethodNotAllowed)
 		return
 	}
 	dateStr := r.URL.Query().Get("date")
@@ -95,7 +94,7 @@ func (h *ApodHandler) GetByDate(w http.ResponseWriter, r *http.Request) {
 func (h *ApodHandler) GetToday(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != constants.MethodGet {
-		http.Error(w, "Invalid HTTP method", http.StatusMethodNotAllowed)
+		http.Error(w, constants.InvalidMethod, http.StatusMethodNotAllowed)
 		return
 	}
 	currentDate := time.Now().UTC()

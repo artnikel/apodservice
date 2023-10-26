@@ -16,8 +16,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// GetApod is method of worker that get metadata from NASA  by API Key to struct
-func GetApod(cfg *config.Config) (*model.APOD, error) {
+// GetApodByKey is method of worker that get metadata from NASA  by API Key to struct
+func GetApodByKey(cfg *config.Config) (*model.APOD, error) {
 	apiURL := cfg.NasaAPIURL + cfg.NasaAPIKey
 	resp, err := http.Get(apiURL) // nolint
 	if err != nil {
@@ -49,6 +49,7 @@ func GetApod(cfg *config.Config) (*model.APOD, error) {
 	return apod, nil
 }
 
+// downloadMedia save image to storage
 func downloadMedia(mediaType, url, date string) error {
 	resp, err := http.Get(url) // nolint
 	if err != nil {
@@ -65,7 +66,7 @@ func downloadMedia(mediaType, url, date string) error {
 			mediaName := date + ".jpg"
 			dst, err := os.Create(filepath.Join(constants.MediaPath, mediaName)) // nolint
 			if err != nil {
-				return err
+				return fmt.Errorf("create %v", err)
 			}
 			defer func() {
 				errClose := dst.Close()

@@ -12,6 +12,8 @@ const (
 	WorkFrequency = 24 * time.Hour
 	// MethodGet - http method GET of request
 	MethodGet = "GET"
-	// RWTimeout is read and write timeout of server config
-	RWTimeout = 10 * time.Second
+	// ServerTimeout is read and write timeout of server config
+	ServerTimeout = 10 * time.Second
+	// InvalidMethod is error if method invalid
+	InvalidMethod = "Invalid HTTP method"
 )

@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/artnikel/apodservice/internal/config"
@@ -29,6 +32,7 @@ func connectPostgres(ctx context.Context, connString string) (*pgxpool.Pool, err
 	return dbpool, nil
 }
 
+// nolint funlen
 func main() {
 	cfg, err := config.New()
 	if err != nil {
@@ -44,11 +48,31 @@ func main() {
 	pgclient := repository.NewPgClient(dbpool)
 	defer dbpool.Close()
 	go func() {
+		currentDate := time.Now().UTC().Format(constants.DateLayout)
+		parsedCurrentDate, err := time.Parse(constants.DateLayout, currentDate)
+		if err != nil {
+			fmt.Printf("error parsing current date %v\n", err)
+		}
+		apod, err := pgclient.ApodGetByDate(ctx, parsedCurrentDate)
+		if err != nil {
+			fmt.Printf("apodGetByDate %v\n", err)
+		}
+		if apod == nil {
+			apod, err := worker.GetApodByKey(cfg)
+			if err != nil {
+				fmt.Printf("error receiving apod: %v\n", err)
+			} else {
+				err := pgclient.ApodCreate(ctx, apod)
+				if err != nil {
+					fmt.Printf("error saving apod in the database: %v\n", err)
+				}
+			}
+		}
 		ticker := time.NewTicker(constants.WorkFrequency)
 		defer ticker.Stop()
 		for {
 			for range ticker.C {
-				apod, err := worker.GetApod(cfg)
+				apod, err := worker.GetApodByKey(cfg)
 				if err != nil {
 					fmt.Printf("error receiving apod: %v\n", err)
 				} else {
@@ -74,10 +98,28 @@ func main() {
 	server := &http.Server{
 		Addr:         ":" + cfg.Port,
 		Handler:      mux,
-		ReadTimeout:  constants.RWTimeout,
-		WriteTimeout: constants.RWTimeout,
+		ReadTimeout:  constants.ServerTimeout,
+		WriteTimeout: constants.ServerTimeout,
 	}
+
+	stopped := make(chan struct{})
+	go func() {
+		sigint := make(chan os.Signal, 1)
+		signal.Notify(sigint, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+		<-sigint
+		ctx, cancel := context.WithTimeout(context.Background(), constants.ServerTimeout)
+		defer cancel()
+		if err := server.Shutdown(ctx); err != nil {
+			log.Printf("http server shutdown error %v", err)
+		}
+		close(stopped)
+	}()
+
+	log.Printf("starting HTTP server on :%s", cfg.Port)
+
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatalf("failed to start http server %v", err)
 	}
+
+	<-stopped
 }

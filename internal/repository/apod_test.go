@@ -91,4 +91,3 @@ func TestApodCreateWithSameDate(t *testing.T) {
 	err = client.ApodCreate(ctx, testApod)
 	require.Error(t, err)
 }
-
