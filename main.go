@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/artnikel/apodservice/docs"
 	"github.com/artnikel/apodservice/internal/config"
 	"github.com/artnikel/apodservice/internal/constants"
 	"github.com/artnikel/apodservice/internal/handler"
@@ -18,6 +19,7 @@ import (
 	"github.com/artnikel/apodservice/internal/service"
 	"github.com/artnikel/apodservice/internal/worker"
 	"github.com/jackc/pgx/v5/pgxpool"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func connectPostgres(ctx context.Context, connString string) (*pgxpool.Pool, error) {
@@ -31,6 +33,10 @@ func connectPostgres(ctx context.Context, connString string) (*pgxpool.Pool, err
 	}
 	return dbpool, nil
 }
+
+// @title NASA APOD API
+// @version 1.0
+// @description API with methods for getting APOD.
 
 // nolint funlen
 func main() {
@@ -91,6 +97,7 @@ func main() {
 	mux.HandleFunc("/list", apodHndl.GetAll)
 	mux.HandleFunc("/today", apodHndl.GetToday)
 	mux.HandleFunc("/bydate", apodHndl.GetByDate)
+	mux.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
 	fs := http.FileServer(http.Dir("./storage"))
 	mux.Handle("/storage/", http.StripPrefix("/storage/", fs))
@@ -118,7 +125,7 @@ func main() {
 	log.Printf("starting HTTP server on :%s", cfg.Port)
 
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatalf("failed to start http server %v", err)
+		log.Fatalf("http server not listening %v", err)
 	}
 
 	<-stopped

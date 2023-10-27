@@ -1,0 +1,45 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: apod-postgres
+    environment:
+      POSTGRES_DB: apoddb
+      POSTGRES_USER: apoduser
+      POSTGRES_PASSWORD: apodpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  flyway:
+    image: flyway/flyway:latest
+    command: ["-url=jdbc:postgresql://postgres:5432/apoddb", "-user=apoduser", "-password=apodpassword", "migrate"]
+    volumes:
+      - ./migrations:/flyway/sql
+    depends_on:
+      - postgres
+    
+  apodservice:
+    build:
+      context: .
+      dockerfile: Dockerfile  
+    command: /app/main
+    ports:
+      - "8080:8080"  
+    depends_on:
+      - postgres  
+    environment:
+      NASA_API_KEY: Og2oYcXOmsERFNvMuXd0tYVbSIs8fgjwaEUCrvqQ
+      NASA_API_URL: https://api.nasa.gov/planetary/apod?api_key=
+      APOD_PORT: 8080
+      APOD_CONNECTION_STRING: postgres://apoduser:apodpassword@postgres:5432/apoddb
+      APOD_DB: apoddb
+      APOD_USER: apoduser
+      APOD_PASSWORD: apodpassword
+      APOD_DB_PORT: 5432
+    links:
+      - postgres
+
+volumes:
+   postgres-data:
