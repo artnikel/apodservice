@@ -1,0 +1,93 @@
+definitions:
+  model.APOD:
+    properties:
+      copyright:
+        type: string
+      date:
+        type: string
+      explanation:
+        type: string
+      media_type:
+        type: string
+      service_version:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API with methods for getting APOD.
+  title: NASA APOD API
+  version: "1.0"
+paths:
+  /bydate:
+    get:
+      description: Get APOD by the specified date
+      operationId: get-apod-by-date
+      parameters:
+      - description: The date in YYYY-MM-DD format
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.APOD'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get APOD by date
+  /list:
+    get:
+      description: Get a list of all APODs
+      operationId: get-all-apods
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.APOD'
+            type: array
+      summary: Get all APODs
+  /today:
+    get:
+      description: Get APOD for the current date
+      operationId: get-apod-for-today
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.APOD'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get APOD for today
+swagger: "2.0"

@@ -29,6 +29,12 @@ func NewApodHandler(apodSvc ApodService) *ApodHandler {
 }
 
 // GetAll is a method of ApodHandler that returns all of APOD`s
+// @Summary Get all APODs
+// @Description Get a list of all APODs
+// @ID get-all-apods
+// @Produce json
+// @Success 200 {array} model.APOD
+// @Router /list [get]
 func (h *ApodHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != constants.MethodGet {
@@ -55,6 +61,16 @@ func (h *ApodHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetByDate is a method of ApodHandler that returns APOD by date parameter of request
+// @Summary Get APOD by date
+// @Description Get APOD by the specified date
+// @ID get-apod-by-date
+// @Produce json
+// @Param date query string true "The date in YYYY-MM-DD format"
+// @Success 200 {object} model.APOD
+// @Failure 400 {string} string "Bad request"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /bydate [get]
 func (h *ApodHandler) GetByDate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodGet {
@@ -77,6 +93,7 @@ func (h *ApodHandler) GetByDate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+	apod.Date = dateStr
 	apodJSON, err := json.Marshal(apod)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -91,6 +108,15 @@ func (h *ApodHandler) GetByDate(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetToday is a method of ApodHandler that returns APOD by current date
+// @Summary Get APOD for today
+// @Description Get APOD for the current date
+// @ID get-apod-for-today
+// @Produce json
+// @Success 200 {object} model.APOD
+// @Failure 400 {string} string "Bad request"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /today [get]
 func (h *ApodHandler) GetToday(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != constants.MethodGet {
@@ -110,6 +136,7 @@ func (h *ApodHandler) GetToday(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+	apod.Date = currentDateStr
 	apodJSON, err := json.Marshal(apod)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
