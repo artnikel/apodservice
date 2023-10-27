@@ -10,14 +10,14 @@ make start
 
 Go to browser
 
-- http://localhost:8080/today
-- http://localhost:8080/list
-- http://localhost:8080/bydate?date= (paste date in format yyyy-mm-dd)
-- http://localhost:8080/storage/
+- `http://localhost:8080/today`
+- `http://localhost:8080/list`
+- `http://localhost:8080/bydate?date=` (paste date in format yyyy-mm-dd)
+- `http://localhost:8080/storage/`
 
-Or send requests in Swagger
+Or send requests in Swagger (storage is not available)
 
-- http://localhost:8080/swagger/index.html#
+- `http://localhost:8080/swagger/index.html#`
 
 Service can be stopped 
 ```bash
