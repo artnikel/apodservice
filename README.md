@@ -5,10 +5,10 @@ APOD Service at start checks if there is APOD data for today (if not, then it lo
 ## Usage
 
 To start the postgresql container with [flyway](https://documentation.red-gate.com/fd/command-line-184127404.html) migrations and go service container.
-
 ```bash
 make start
 ```
+> **_NOTE:_**  This service use docker image `flyway/flyway` with version of flyway 9.8.1. If your docker image name is `redgate/flyway` edit this name of image in file `docker-compose.yml` in row №16. 
 
 Go to browser
 
