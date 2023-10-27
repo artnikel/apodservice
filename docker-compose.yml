@@ -40,6 +40,8 @@ services:
       APOD_DB_PORT: 5432
     links:
       - postgres
+    volumes:
+      - ./storage:/storage
 
 volumes:
    postgres-data:
